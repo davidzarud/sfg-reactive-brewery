@@ -9,10 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.r2dbc.connection.init.ConnectionFactoryInitializer;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,6 +24,9 @@ class BeerControllerTest {
 
     @Autowired
     WebTestClient webTestClient;
+
+    @MockBean
+    ConnectionFactoryInitializer connectionFactoryInitializer;
 
     @MockBean
     BeerService beerService;
@@ -41,19 +45,19 @@ class BeerControllerTest {
 
         beerPagedList = new BeerPagedList(List.of(
                 BeerDto.builder()
-                        .id(UUID.randomUUID())
+                        .id(1L)
                         .beerName("TestBeer_1")
                         .beerStyle("IPA")
                         .upc("123123123")
                         .build(),
                 BeerDto.builder()
-                        .id(UUID.randomUUID())
+                        .id(2L)
                         .beerName("TestBeer_2")
                         .beerStyle("WHEAT")
                         .upc("111111111")
                         .build(),
                 BeerDto.builder()
-                        .id(UUID.randomUUID())
+                        .id(3L)
                         .beerName("TestBeer_3")
                         .beerStyle("ALE")
                         .upc("321321321")
@@ -63,9 +67,9 @@ class BeerControllerTest {
     @Test
     void getBeerById() {
 
-        UUID beerId = UUID.randomUUID();
+        Long beerId = 1L;
 
-        given(beerService.getById(any(), any())).willReturn(validBeer);
+        given(beerService.getById(any(), any())).willReturn(Mono.just(validBeer));
 
         webTestClient.get()
                 .uri("/api/v1/beer/" + beerId)
