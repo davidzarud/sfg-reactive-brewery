@@ -58,6 +58,50 @@ public class WebClientIT {
     }
 
     @Test
+    void testGetBeerBUpc() throws InterruptedException {
+
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        Mono<BeerDto> beerDtoMono = webClient.get()
+                .uri("api/v1/beerUpc/0083783375213")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(BeerDto.class);
+
+        beerDtoMono.subscribe(beerDto -> {
+            assertThat(beerDto).isNotNull();
+            assertThat(beerDto.getBeerName()).isNotBlank();
+
+            countDownLatch.countDown();
+        });
+
+        countDownLatch.await(1000, TimeUnit.MILLISECONDS);
+        assertThat(countDownLatch.getCount()).isEqualTo(0);
+    }
+
+    @Test
+    void testGetBeerBUpcNotFound() throws InterruptedException {
+
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        Mono<BeerDto> beerDtoMono = webClient.get()
+                .uri("api/v1/beerUpc/AA")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(BeerDto.class);
+
+        beerDtoMono.subscribe(beerDto -> {
+            assertThat(beerDto).isNotNull();
+            assertThat(beerDto.getBeerName()).isNotBlank();
+
+            countDownLatch.countDown();
+        });
+
+        countDownLatch.await(1000, TimeUnit.MILLISECONDS);
+        assertThat(countDownLatch.getCount()).isEqualTo(0);
+    }
+
+    @Test
     void testListBeers() throws InterruptedException {
 
         CountDownLatch countDownLatch = new CountDownLatch(1);

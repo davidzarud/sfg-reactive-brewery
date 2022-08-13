@@ -3,6 +3,7 @@ package com.david.reactivebrewery.repositories;
 
 import com.david.reactivebrewery.domain.Beer;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import reactor.core.publisher.Mono;
 
 
 public interface BeerRepository extends ReactiveCrudRepository<Beer, Long> {
@@ -12,5 +13,5 @@ public interface BeerRepository extends ReactiveCrudRepository<Beer, Long> {
 //
 //    Page<Beer> findAllByBeerNameAndBeerStyle(String beerName, BeerStyleEnum beerStyle, Pageable pageable);
 
-    Beer findByUpc(String upc);
+    Mono<Beer> findByUpc(String upc);
 }
