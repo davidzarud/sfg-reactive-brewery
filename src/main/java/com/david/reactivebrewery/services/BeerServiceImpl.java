@@ -78,9 +78,11 @@ public class BeerServiceImpl implements BeerService {
     @Override
     public Mono<BeerDto> getById(Long beerId, Boolean showInventoryOnHand) {
         if (showInventoryOnHand) {
-            return beerRepository.findById(beerId).map(beerMapper:: beerToBeerDtoWithInventory);
+            return beerRepository.findById(beerId).map(beerMapper:: beerToBeerDtoWithInventory)
+                    .switchIfEmpty(Mono.error(new NotFoundException()));
         } else {
-            return beerRepository.findById(beerId).map(beerMapper:: beerToBeerDto);
+            return beerRepository.findById(beerId).map(beerMapper:: beerToBeerDto)
+                    .switchIfEmpty(Mono.error(new NotFoundException()));
         }
     }
 
